@@ -5,6 +5,27 @@
     "version": "0.2.0",
     "configurations": [
         {
+            "name": "Say Hello",
+            "command": "npm run hello",
+            "request": "launch",
+            "type": "node-terminal"
+        },
+        {
+            "name": "Start Server",
+            "command": "npm run server",
+            "request": "launch",
+            "type": "node-terminal"
+        },
+        {
+            "name": "Attach",
+            "port": 9229,
+            "request": "attach",
+            "skipFiles": [
+                "<node_internals>/**"
+            ],
+            "type": "node"
+        },
+        {
             "type": "node-terminal",
             "name": "Jest",
             "request": "launch",

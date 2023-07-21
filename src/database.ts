@@ -118,9 +118,23 @@ class Database {
         return this._tasks;
     }
 
-    public addTask(name: string, time: number, complete: boolean): string {
+    public reset() {
+        this._tasks.clear();
+        this._save();
+    }
+
+    public makeData() {
+        this.reset();
+        this.addTask("Task 1");
+        this.addTask("Task 2");
+        this.addTask("Task 3");
+        this.addTask("Task 4");
+        this.addTask("Task 5");
+    }
+
+    public addTask(name: string): string {
         let id = this._generateId();
-        let task = new Task(name, time, complete);
+        let task = new Task(name, 0, false);
         this._tasks.set(id, task);
         this._save();
         return id;
