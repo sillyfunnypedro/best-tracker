@@ -11,6 +11,12 @@
             "type": "node-terminal"
         },
         {
+            "name": "Run simulator",
+            "command": "npm run simulator",
+            "request": "launch",
+            "type": "node-terminal"
+        },
+        {
             "name": "Start Server",
             "command": "npm run server",
             "request": "launch",

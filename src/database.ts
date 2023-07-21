@@ -47,7 +47,9 @@ class Task {
     }
     // requestOwner(user:string): boolean
     public requestOwner(user: string): boolean {
-        if (this._owner == "") {
+        console.log(`requesting owner ${user} for task ${this._name}`);
+        if (this._owner === "") {
+            console.log(`assigning owner ${user} for task ${this._name}`);
             this._owner = user;
             return true;
         }
@@ -141,6 +143,7 @@ class Database {
     }
 
     public addUserToTask(taskId: string, user: string): boolean {
+        console.log(`>>>>>>>> attempting to assign ${user} to ${taskId}`);
         let task = this._tasks.get(taskId);
         if (task) {
             const result = task.requestOwner(user);
@@ -167,6 +170,19 @@ class Database {
         if (task) {
             if (task.getOwner() == userId) {
                 task.time += time;
+                console.log(`added ${time} to ${taskId} for ${userId}`);
+                this._save();
+                return true;
+            }
+        }
+        return false;
+    }
+
+    public markTaskComplete(taskId: string, userId: string): boolean {
+        let task = this._tasks.get(taskId);
+        if (task) {
+            if (task.getOwner() == userId) {
+                task.complete = true;
                 this._save();
                 return true;
             }

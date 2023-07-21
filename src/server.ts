@@ -15,11 +15,57 @@ import bodyParser from 'body-parser';
 
 import { Database } from './database';
 
-const app = express();
+// define a debug flag to turn on debugging
+const debug = true;
 
+// define a shim for console.log so we can turn off debugging
+if (!debug) {
+    console.log = () => { };
+}
+
+const app = express();
 app.use(bodyParser.json());
 
+// Add a middleware function to log incoming requests
+app.use((req, res, next) => {
+    console.log(`${req.method} ${req.url}`);
+    next();
+});
+
+
 const db = new Database();
+
+//  ********************************************
+//  THIS IS NOT GOOD PRACTICE
+//  ********************************************
+//  you should never use get to change the state of the server
+//  you should use post, put, or delete
+//  ********************************************    
+// clear the database (for testing so get can be used from browser)
+app.get('/cleardata', (req: express.Request, res: express.Response) => {
+    db.reset();
+    res.json({ success: true });
+});
+
+// this is for demo purposes only (it is get so i can run from browser)
+app.get('/makedata', (req: express.Request, res: express.Response) => {
+    db.makeData();
+    res.json({ success: true });
+});
+app.post('/makedata', (req: express.Request, res: express.Response) => {
+    db.makeData();
+    res.json({ success: true });
+});
+// ********************************************
+// the above is not good practice
+// ********************************************
+// ********************************************
+
+// delete /tasks clears the list of tasks
+app.delete('/tasks', (req: express.Request, res: express.Response) => {
+    db.reset();
+    res.json({ success: true });
+});
 
 // get /tasks returns a list of all the tasks
 app.get('/tasks', (req: express.Request, res: express.Response) => {
@@ -35,28 +81,59 @@ app.get('/tasks', (req: express.Request, res: express.Response) => {
     res.json(tasks);
 });
 
-app.get('/makedata', (req: express.Request, res: express.Response) => {
-    db.makeData();
-    res.json({ success: true });
-});
 
-// post /tasks creates a new task and returns the id
-// the body of the request should be a json object
-
-app.post('/task', (req: express.Request, res: express.Response) => {
-    let name = req.body.name;
-    let id = db.addTask(name);
+// post a new task
+app.post('/tasks/add/:name', (req: express.Request, res: express.Response) => {
+    let name = req.params.name;
+    const id = db.addTask(name);
+    console.log(`added task ${id} ${name}`)
     res.json({ id: id });
 });
 
-app.put('/tasks/assign/:id:user', (req: express.Request, res: express.Response) => {
+// assign user to the task
+app.put('/tasks/assign/:id/:user', (req: express.Request, res: express.Response) => {
+    console.log(req.params);
     let id = req.params.id;
     let user = req.params.user;
+    console.log(`attempting to assign ${user} to ${id}`);
     const success = db.addUserToTask(id, user);
+    if (success) {
+        console.log(`assigned ${user} to ${id}`);
+    } else {
+        console.log(`failed to assign ${user} to ${id}`);
+    }
     res.json({ success: success });
 });
 
+// remove user from the task
+app.put('/tasks/remove/:id/:user', (req: express.Request, res: express.Response) => {
+    let id = req.params.id;
+    let user = req.params.user;
+    const success = db.removeUserFromTask(id, user);
+    res.json({ success: success });
+});
 
+// add time to the task
+app.put('/tasks/update/:id/:user/:time', (req: express.Request, res: express.Response) => {
+    let id = req.params.id;
+    let user = req.params.user;
+    let time = Number(req.params.time);
+    const success = db.addTimeToTask(id, user, time);
+    if (success) {
+        console.log(`added ${time} to ${id} for ${user}`);
+    } else {
+        console.log(`failed to add ${time} to ${id} for ${user}`);
+    }
+    res.json({ success: success });
+});
+
+// mark task as complete
+app.put('/tasks/complete/:id/:user', (req: express.Request, res: express.Response) => {
+    let id = req.params.id;
+    let user = req.params.user;
+    const success = db.markTaskComplete(id, user);
+    res.json({ success: success });
+});
 
 
 // start the app and test it
@@ -64,9 +141,3 @@ app.listen(3000, () => {
     console.log('listening on port 3000');
 });
 
-// test the app
-// 1. start the app
-// 2. open a browser and go to http://localhost:3000/tasks
-// 3. open a terminal and run curl http://localhost:3000/tasks
-// 4. open a terminal and run curl -X POST -H "Content-Type: application/json" -d '{"name":"test","time":0,"complete":false}' http://localhost:3000/tasks
-// 5. open a terminal and run curl -X PUT http://localhost:3000/tasks/assign/000000:testuser

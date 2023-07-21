@@ -1,4 +1,6 @@
-import Task from './task';
+import { Task } from './database';
+import axios from 'axios';
+
 
 
 // a class that stores a list of tasks.
@@ -18,31 +20,84 @@ export default class Client {
         this._userID = userID;
     }
 
-    public get tasks(): Map<string, Task> {
+    public get userID(): string {
+        return this._userID;
+    }
+
+    public async clearData(): Promise<boolean> {
+        const response = await axios.delete('http://localhost:3000/tasks');
+        if (response.status == 200) {
+            return true
+        } else {
+            return false
+        }
+    }
+
+    public async getTasks(): Promise<Task[]> {
         //construct the get request to the server
-        let request = new XMLHttpRequest();
-        request.open('GET', 'http://localhost:3000/tasks', false);
-        request.send(null);
-        if (request.status == 200) {
-            let tasks = JSON.parse(request.responseText);
-            for (let task of tasks) {
-                this._tasks.set(task.id, new Task(task.name, task.time, task.complete));
+        const response = await axios.get(`http://localhost:3000/tasks`);
+        let result: Task[] = [];
+        if (response.status == 200) {
+
+            for (let task of response.data) {
+                result.push(new Task(task.name, task.time, task.complete));
             }
+        } else {
+            console.log("Error getting tasks");
         }
-
-        return this._tasks;
+        return result;
     }
 
-    public postTask(name: string) {
-        let request = new XMLHttpRequest();
-        request.open('POST', 'http://localhost:3000/task', false);
-        request.setRequestHeader('Content-Type', 'application/json');
-        request.send(JSON.stringify({ name: name }));
-        if (request.status == 200) {
-            let task = JSON.parse(request.responseText);
-            this._tasks.set(task.id, new Task(task.name, task.time, task.complete));
+    public async postTask(taskName: string): Promise<string> {
+        const response = await axios.post(`http://localhost:3000/tasks/add/${taskName}`);
+        if (response.status == 200) {
+            return response.data.id;
+        } else {
+            return "NODATA";
         }
     }
 
+    public async postTimeToTask(taskId: string, time: number): Promise<boolean> {
+        const response = await axios.put(`http://localhost:3000/tasks/update/${taskId}/${this._userID}/${time}`);
+        if (response.status == 200) {
+            return true;
+        } else {
+            return false;
+        }
+    }
+
+    public async addUserToTask(taskId: string): Promise<boolean> {
+        const response = await axios.put(`http://localhost:3000/tasks/assign/${taskId}/${this._userID}`);
+        if (response.status == 200) {
+            console.log(response.data);
+            const result = response.data;
+            return result.success;
+        } else {
+            return false;
+        }
+    }
+
+    public async removeUserFromTask(taskId: string): Promise<boolean> {
+        const response = await axios.put(`http://localhost:3000/tasks/remove/${taskId}/${this._userID}`);
+        if (response.status == 200) {
+            return true;
+        } else {
+            return false;
+        }
+    }
+
+    public async markTaskComplete(taskId: string): Promise<boolean> {
+        const response = await axios.put(`http://localhost:3000/tasks/complete/${taskId}/${this._userID}`);
+        if (response.status == 200) {
+            return true;
+        } else {
+            return false;
+        }
+    }
 
 }
+
+
+
+
+
