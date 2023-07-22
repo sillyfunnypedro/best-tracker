@@ -12,6 +12,7 @@
 import fs from 'fs';
 import express from 'express';
 import bodyParser from 'body-parser';
+import cors from 'cors';
 import { PortsGlobal } from './PortsGlobal';
 
 import { Database } from './database';
@@ -33,6 +34,9 @@ app.use((req, res, next) => {
     next();
 });
 
+app.use(cors());
+
+
 
 const db = new Database();
 
@@ -44,6 +48,11 @@ const db = new Database();
 //  ********************************************    
 // clear the database (for testing so get can be used from browser)
 app.get('/cleardata', (req: express.Request, res: express.Response) => {
+    db.reset();
+    res.json({ success: true });
+});
+
+app.post('/cleardata', (req: express.Request, res: express.Response) => {
     db.reset();
     res.json({ success: true });
 });
@@ -76,7 +85,8 @@ app.get('/tasks', (req: express.Request, res: express.Response) => {
             id: id,
             name: task.name,
             time: task.time,
-            complete: task.complete
+            complete: task.complete,
+            owner: task.owner
         });
     }
     res.json(tasks);
@@ -127,6 +137,8 @@ app.put('/tasks/update/:id/:user/:time', (req: express.Request, res: express.Res
     }
     res.json({ success: success });
 });
+
+
 
 // mark task as complete
 app.put('/tasks/complete/:id/:user', (req: express.Request, res: express.Response) => {

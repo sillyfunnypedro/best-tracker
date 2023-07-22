@@ -57,14 +57,14 @@ describe('Task', () => {
         it('should set the owner property if it is empty', () => {
             const result = task.requestOwner('Test User');
             expect(result).toBe(true);
-            expect(task.getOwner()).toBe('Test User');
+            expect(task.owner).toBe('Test User');
         });
 
         it('should not set the owner property if it is already set', () => {
             task.requestOwner('Test User');
             const result = task.requestOwner('Another User');
             expect(result).toBe(false);
-            expect(task.getOwner()).toBe('Test User');
+            expect(task.owner).toBe('Test User');
         });
     });
 });
@@ -121,7 +121,7 @@ describe('Database', () => {
             const id = database.addTask('Test Task');
             const result = database.addUserToTask(id, 'Test User');
             expect(result).toBe(true);
-            expect(database.tasks.get(id)?.getOwner()).toBe('Test User');
+            expect(database.tasks.get(id)?.owner).toBe('Test User');
         });
 
         it('should not set the owner of the task if it is already set', () => {
@@ -129,7 +129,7 @@ describe('Database', () => {
             database.addUserToTask(id, 'Test User');
             const result = database.addUserToTask(id, 'Another User');
             expect(result).toBe(false);
-            expect(database.tasks.get(id)?.getOwner()).toBe('Test User');
+            expect(database.tasks.get(id)?.owner).toBe('Test User');
         });
 
         it('should return false if the task does not exist', () => {
@@ -158,14 +158,14 @@ describe('Database', () => {
             const id = database.addTask('Test Task');
             database.addUserToTask(id, 'Test User');
             database.removeUserFromTask(id, 'Test User');
-            expect(database.tasks.get(id)?.getOwner()).toBe('');
+            expect(database.tasks.get(id)?.owner).toBe('');
         });
 
         it('should not clear the owner of the task if the user does not match', () => {
             const id = database.addTask('Test Task');
             database.addUserToTask(id, 'Test User');
             database.removeUserFromTask(id, 'Another User');
-            expect(database.tasks.get(id)?.getOwner()).toBe('Test User');
+            expect(database.tasks.get(id)?.owner).toBe('Test User');
         });
 
         it('should do nothing if the task does not exist', () => {

@@ -1,7 +1,7 @@
 import { Task } from './database';
 import axios from 'axios';
 
-
+import { PortsGlobal } from './PortsGlobal';
 
 // a class that stores a list of tasks.
 // it gets the list of tasks a server at localhost:3000/tasks
@@ -14,7 +14,7 @@ import axios from 'axios';
 export default class Client {
     private _tasks: Map<string, Task>;
     private _userID: string;
-    private _serverPort: number = 3000;
+    private _serverPort: number = PortsGlobal.serverPort;
 
     constructor(userID: string) {
         this._tasks = new Map<string, Task>();
