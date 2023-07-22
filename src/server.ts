@@ -12,6 +12,7 @@
 import fs from 'fs';
 import express from 'express';
 import bodyParser from 'body-parser';
+import { PortsGlobal } from './PortsGlobal';
 
 import { Database } from './database';
 
@@ -136,8 +137,10 @@ app.put('/tasks/complete/:id/:user', (req: express.Request, res: express.Respons
 });
 
 
+// get the port we should be using
+const port = PortsGlobal.serverPort;
 // start the app and test it
-app.listen(3000, () => {
-    console.log('listening on port 3000');
+app.listen(port, () => {
+    console.log(`listening on port ${port}`);
 });
 

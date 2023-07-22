@@ -14,6 +14,7 @@ import axios from 'axios';
 export default class Client {
     private _tasks: Map<string, Task>;
     private _userID: string;
+    private _serverPort: number = 3000;
 
     constructor(userID: string) {
         this._tasks = new Map<string, Task>();
@@ -25,7 +26,7 @@ export default class Client {
     }
 
     public async clearData(): Promise<boolean> {
-        const response = await axios.delete('http://localhost:3000/tasks');
+        const response = await axios.delete(`http://localhost:${this._serverPort}/tasks`);
         if (response.status == 200) {
             return true
         } else {
@@ -35,7 +36,7 @@ export default class Client {
 
     public async getTasks(): Promise<Task[]> {
         //construct the get request to the server
-        const response = await axios.get(`http://localhost:3000/tasks`);
+        const response = await axios.get(`http://localhost:${this._serverPort}/tasks`);
         let result: Task[] = [];
         if (response.status == 200) {
 
@@ -49,7 +50,7 @@ export default class Client {
     }
 
     public async postTask(taskName: string): Promise<string> {
-        const response = await axios.post(`http://localhost:3000/tasks/add/${taskName}`);
+        const response = await axios.post(`http://localhost:${this._serverPort}/tasks/add/${taskName}`);
         if (response.status == 200) {
             return response.data.id;
         } else {
@@ -58,7 +59,7 @@ export default class Client {
     }
 
     public async postTimeToTask(taskId: string, time: number): Promise<boolean> {
-        const response = await axios.put(`http://localhost:3000/tasks/update/${taskId}/${this._userID}/${time}`);
+        const response = await axios.put(`http://localhost:${this._serverPort}/tasks/update/${taskId}/${this._userID}/${time}`);
         if (response.status == 200) {
             return true;
         } else {
@@ -67,7 +68,7 @@ export default class Client {
     }
 
     public async addUserToTask(taskId: string): Promise<boolean> {
-        const response = await axios.put(`http://localhost:3000/tasks/assign/${taskId}/${this._userID}`);
+        const response = await axios.put(`http://localhost:${this._serverPort}/tasks/assign/${taskId}/${this._userID}`);
         if (response.status == 200) {
             console.log(response.data);
             const result = response.data;
@@ -78,7 +79,7 @@ export default class Client {
     }
 
     public async removeUserFromTask(taskId: string): Promise<boolean> {
-        const response = await axios.put(`http://localhost:3000/tasks/remove/${taskId}/${this._userID}`);
+        const response = await axios.put(`http://localhost:${this._serverPort}/tasks/remove/${taskId}/${this._userID}`);
         if (response.status == 200) {
             return true;
         } else {
@@ -87,7 +88,7 @@ export default class Client {
     }
 
     public async markTaskComplete(taskId: string): Promise<boolean> {
-        const response = await axios.put(`http://localhost:3000/tasks/complete/${taskId}/${this._userID}`);
+        const response = await axios.put(`http://localhost:${this._serverPort}/tasks/complete/${taskId}/${this._userID}`);
         if (response.status == 200) {
             return true;
         } else {
