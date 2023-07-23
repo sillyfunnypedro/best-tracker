@@ -67,6 +67,7 @@ class Database {
 
     public reset() {
         this._tasks.clear();
+        this._id = 0;
         this._save();
     }
 

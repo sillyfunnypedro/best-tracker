@@ -27,17 +27,19 @@ let url = `http://pencil.local:${port}/tasks`;
 // define the props for the component, a string for the user name
 interface TaskClientProps {
     userName: string;
+    documentName: string;
 }
 
 
 
-export function TaskClient({ userName }: TaskClientProps) {
+export function TaskClient({ userName, documentName }: TaskClientProps) {
     // get the local host name to bypass CORS
     let localHostName = window.location.hostname;
     console.log(`localHostName: ${localHostName}`);
 
     const [tasks, setTasks] = useState<Task[]>([]);
     const [taskName, setTaskName] = useState<string>('');
+
 
     function getTasks() {
         fetch(url)
@@ -53,7 +55,18 @@ export function TaskClient({ userName }: TaskClientProps) {
                 console.log(`getTask error: ${error}`);
             }
             );
+
     }
+
+    // call getTasks on component mount and every 3 seconds thereafter
+    useEffect(() => {
+        getTasks();
+        const intervalId = setInterval(() => {
+            getTasks();
+        }, 333);
+        return () => clearInterval(intervalId);
+    }, []);
+
 
     function requestTask(taskId: string) {
         const url = `http://${localHostName}:${port}/tasks/assign/${taskId}/${userName}`;
@@ -228,7 +241,7 @@ export function TaskClient({ userName }: TaskClientProps) {
 
     function getTaskString(task: Task) {
         return <div className="label">
-            {task.id}-{task.name}
+            {task.id}-{task.name}[{task.time}]
         </div>
 
     }
@@ -268,21 +281,38 @@ export function TaskClient({ userName }: TaskClientProps) {
         }
         if (working) {
             return <div >
-                {getTaskString(task)}
-                <button onClick={() => updateTask(task.id)}>
-                    Update
-                </button>
-                <button onClick={() => releaseTask(task.id)}>
-                    Release
-                </button>
-                <button onClick={() => completeTask(task.id)}>
-                    Complete
-                </button>
+                <table>
+                    <tr>
+                        <td>
+                            {getTaskString(task)}
+                        </td>
+                        <td>
+                            <button onClick={() => updateTask(task.id)}>
+                                Update
+                            </button>
+                            <button onClick={() => releaseTask(task.id)}>
+                                Release
+                            </button>
+                            <button onClick={() => completeTask(task.id)}>
+                                Complete
+                            </button>
+                        </td>
+                    </tr>
+                </table>
             </div>
         }
 
         return <div>
-            {task.id}-{task.name} {task.owner}
+            <table>
+                <tr>
+                    <td>
+                        {getTaskString(task)}
+                    </td>
+                    <td className="label">
+                        {task.owner} is working
+                    </td>
+                </tr>
+            </table>
         </div>
     }
 
