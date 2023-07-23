@@ -52,6 +52,7 @@ app.get('/cleardata', (req: express.Request, res: express.Response) => {
     res.json({ success: true });
 });
 
+
 app.post('/cleardata', (req: express.Request, res: express.Response) => {
     db.reset();
     res.json({ success: true });
@@ -98,6 +99,8 @@ app.post('/tasks/add/:name', (req: express.Request, res: express.Response) => {
     let name = req.params.name;
     const id = db.addTask(name);
     console.log(`added task ${id} ${name}`)
+    let documentName = req.body.documentName
+    console.log("----->" + documentName + "<-----")
     res.json({ id: id });
 });
 
@@ -106,6 +109,7 @@ app.put('/tasks/assign/:id/:user', (req: express.Request, res: express.Response)
     console.log(req.params);
     let id = req.params.id;
     let user = req.params.user;
+
     console.log(`attempting to assign ${user} to ${id}`);
     const success = db.addUserToTask(id, user);
     if (success) {

@@ -13,16 +13,32 @@ import Task from './task';
 // the default location for the file is in the same directory as the executable
 // the file name for the data base is tasks.json 
 // the tasks are stored in a map that is indexed by the task id
+// the database provides different documents.   The location of the 
+// documents is in the directory "documents" in the same directory as the executable
+
 class Database {
     private _tasks: Map<string, Task>;
     private _filename: string;
     private _id: number = 0;
+    private _documentDirectory: string = path.join(__dirname, "documents");
 
-    constructor() {
+    // default document name is tasks
+    constructor(documentName: string = "tasks") {
         this._tasks = new Map<string, Task>();
-        this._filename = path.join(__dirname, "tasks.json");
+        // remove any / or \ from the document name
+        documentName = documentName.replace(/[\/\\]/g, "");
+
+        this._filename = path.join(this._documentDirectory, documentName + ".json");
         this._load();
+        this._initializeDirectory();
     }
+
+    private _initializeDirectory() {
+        if (!fs.existsSync(this._documentDirectory)) {
+            fs.mkdirSync(this._documentDirectory, { recursive: true });
+        }
+    }
+
 
     private _load() {
         try {

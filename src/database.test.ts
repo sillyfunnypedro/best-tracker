@@ -196,4 +196,14 @@ describe('Database', () => {
             expect(result).toBe(false);
         });
     });
+
+    describe('named constructor', () => {
+        it('should be able to create a new database with a name', () => {
+            const database1 = new Database('test1');
+            const database2 = new Database('test2');
+            expect(database1['_filename']).toBe(path.join(__dirname, 'documents', 'test1.json'));
+            expect(database2['_filename']).toBe(path.join(__dirname, 'documents', 'test2.json'));
+        });
+
+    });
 });
