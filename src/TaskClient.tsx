@@ -11,7 +11,9 @@ import './TaskClient.css';
 
 
 const port = PortsGlobal.serverPort;
-let url = `http://localhost:${port}/tasks`;
+
+const hostname = window.location.hostname;
+const baseURL = `http://${hostname}:${port}`;
 
 
 // a component that has a button to get the tasks from the server
@@ -42,7 +44,8 @@ export function TaskClient({ userName, documentName }: TaskClientProps) {
 
 
     function getTasks() {
-        fetch(url)
+        const requestURL = baseURL + "/tasks"
+        fetch(requestURL)
             .then((response) => {
                 console.log(`response: ${response}`);
                 return response.json();
@@ -69,7 +72,8 @@ export function TaskClient({ userName, documentName }: TaskClientProps) {
 
 
     function requestTask(taskId: string) {
-        const url = `http://${localHostName}:${port}/tasks/assign/${taskId}/${userName}`;
+        const path = `/tasks/assign/${taskId}/${userName}`
+        const requestURL = baseURL + path;
         const options = {
             method: 'PUT',
             headers: {
@@ -77,7 +81,7 @@ export function TaskClient({ userName, documentName }: TaskClientProps) {
             },
             body: JSON.stringify({})
         }
-        fetch(url, options)
+        fetch(requestURL, options)
             .then((response) => {
                 console.log(`response: ${response}`);
                 return response.json();
@@ -93,7 +97,8 @@ export function TaskClient({ userName, documentName }: TaskClientProps) {
     }
 
     function updateTask(taskId: string) {
-        const url = `http://${localHostName}:${port}/tasks/update/${taskId}/${userName}/1`;
+        const path = `/tasks/update/${taskId}/${userName}/1`;
+        const requestURL = baseURL + path;
         const options = {
             method: 'PUT',
             headers: {
@@ -101,7 +106,7 @@ export function TaskClient({ userName, documentName }: TaskClientProps) {
             },
             body: JSON.stringify({})
         }
-        fetch(url, options)
+        fetch(requestURL, options)
             .then((response) => {
                 console.log(`response: ${response}`);
                 return response.json();
@@ -117,7 +122,9 @@ export function TaskClient({ userName, documentName }: TaskClientProps) {
     }
 
     function releaseTask(taskId: string) {
-        const url = `http://${localHostName}:${port}/tasks/remove/${taskId}/${userName}`;
+        const path = `/tasks/remove/${taskId}/${userName}`;
+        const requestURL = baseURL + path;
+
         const options = {
             method: 'PUT',
             headers: {
@@ -125,7 +132,7 @@ export function TaskClient({ userName, documentName }: TaskClientProps) {
             },
             body: JSON.stringify({})
         }
-        fetch(url, options)
+        fetch(requestURL, options)
             .then((response) => {
                 console.log(`response: ${response}`);
                 return response.json();
@@ -141,7 +148,8 @@ export function TaskClient({ userName, documentName }: TaskClientProps) {
     }
 
     function completeTask(taskId: string) {
-        const url = `http://${localHostName}:${port}/tasks/complete/${taskId}/${userName}`;
+        const path = `/tasks/complete/${taskId}/${userName}`;
+        const requestURL = baseURL + path;
         const options = {
             method: 'PUT',
             headers: {
@@ -149,7 +157,7 @@ export function TaskClient({ userName, documentName }: TaskClientProps) {
             },
             body: JSON.stringify({})
         }
-        fetch(url, options)
+        fetch(requestURL, options)
             .then((response) => {
                 console.log(`response: ${response}`);
                 return response.json();
@@ -165,7 +173,8 @@ export function TaskClient({ userName, documentName }: TaskClientProps) {
     }
 
     function clearServer() {
-        const url = `http://${localHostName}:${port}/tasks`;
+        const path = `/tasks`;
+        const requestURL = baseURL + path;
         const options = {
             method: 'DELETE',
             headers: {
@@ -173,7 +182,7 @@ export function TaskClient({ userName, documentName }: TaskClientProps) {
             },
             body: JSON.stringify({})
         }
-        fetch(url, options)
+        fetch(requestURL, options)
             .then((response) => {
                 console.log(`response: ${response}`);
                 return response.json();
@@ -189,7 +198,8 @@ export function TaskClient({ userName, documentName }: TaskClientProps) {
     }
 
     function deleteTask(taskId: string) {
-        const url = `http://${localHostName}:${port}/tasks/delete/${taskId}/${userName}`;
+        const path = `/tasks/delete/${taskId}/${userName}`;
+        const requestURL = baseURL + path;
         const options = {
             method: 'DELETE',
             headers: {
@@ -197,7 +207,7 @@ export function TaskClient({ userName, documentName }: TaskClientProps) {
             },
             body: JSON.stringify({})
         }
-        fetch(url, options)
+        fetch(requestURL, options)
             .then((response) => {
                 console.log(`response: ${response}`);
                 return response.json();
@@ -213,7 +223,8 @@ export function TaskClient({ userName, documentName }: TaskClientProps) {
     }
 
     function makeData() {
-        const url = `http://${localHostName}:${port}/makedata`;
+        const path = `/makedata`;
+        const requestURL = baseURL + path;
         const options = {
             method: 'POST',
             headers: {
@@ -221,7 +232,7 @@ export function TaskClient({ userName, documentName }: TaskClientProps) {
             },
             body: JSON.stringify({})
         }
-        fetch(url, options)
+        fetch(requestURL, options)
             .then((response) => {
                 console.log(`response: ${response}`);
                 return response.json();
@@ -238,7 +249,8 @@ export function TaskClient({ userName, documentName }: TaskClientProps) {
 
     function addTask() {
 
-        const url = `http://${localHostName}:${port}/tasks/add/${taskName}`;
+        const path = `/tasks/add/${taskName}`;
+        const requestURL = baseURL + path;
         const options = {
             method: 'POST',
             headers: {
@@ -248,7 +260,7 @@ export function TaskClient({ userName, documentName }: TaskClientProps) {
                 "documentName": documentName
             })
         }
-        fetch(url, options)
+        fetch(requestURL, options)
             .then((response) => {
                 console.log(`response: ${response}`);
                 return response.json();
