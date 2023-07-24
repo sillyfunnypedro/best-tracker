@@ -143,6 +143,14 @@ app.put('/tasks/update/:id/:user/:time', (req: express.Request, res: express.Res
 });
 
 
+// delete a task from the list if it is owed by the user
+app.delete('/tasks/delete/:id/:user', (req: express.Request, res: express.Response) => {
+    let id = req.params.id;
+    let user = req.params.user;
+    const success = db.deleteTask(id, user);
+    res.json({ success: success });
+});
+
 
 // mark task as complete
 app.put('/tasks/complete/:id/:user', (req: express.Request, res: express.Response) => {

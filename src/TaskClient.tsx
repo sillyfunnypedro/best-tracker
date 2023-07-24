@@ -11,7 +11,7 @@ import './TaskClient.css';
 
 
 const port = PortsGlobal.serverPort;
-let url = `http://pencil.local:${port}/tasks`;
+let url = `http://localhost:${port}/tasks`;
 
 
 // a component that has a button to get the tasks from the server
@@ -188,6 +188,30 @@ export function TaskClient({ userName, documentName }: TaskClientProps) {
             );
     }
 
+    function deleteTask(taskId: string) {
+        const url = `http://${localHostName}:${port}/tasks/delete/${taskId}/${userName}`;
+        const options = {
+            method: 'DELETE',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({})
+        }
+        fetch(url, options)
+            .then((response) => {
+                console.log(`response: ${response}`);
+                return response.json();
+            }
+            ).then((json) => {
+                console.log(`json: ${json}`);
+                getTasks();
+            }
+            ).catch((error) => {
+                console.log(`deleteTask error: ${error}`);
+            }
+            );
+    }
+
     function makeData() {
         const url = `http://${localHostName}:${port}/makedata`;
         const options = {
@@ -298,6 +322,10 @@ export function TaskClient({ userName, documentName }: TaskClientProps) {
                             <button onClick={() => completeTask(task.id)}>
                                 Complete
                             </button>
+                            <button onClick={() => deleteTask(task.id)}>
+                                Delete
+                            </button>
+
                         </td>
                     </tr>
                 </table>
@@ -312,6 +340,7 @@ export function TaskClient({ userName, documentName }: TaskClientProps) {
                     </td>
                     <td className="label">
                         {task.owner} is working
+
                     </td>
                 </tr>
             </table>

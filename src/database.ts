@@ -118,6 +118,18 @@ class Database {
         return false;
     }
 
+    public deleteTask(taskId: string, user: string): boolean {
+        let task = this._tasks.get(taskId);
+        if (task) {
+            if (task.owner == user) {
+                this._tasks.delete(taskId);
+                this._save();
+                return true;
+            }
+        }
+        return false;
+    }
+
     public removeUserFromTask(taskId: string, user: string) {
         let task = this._tasks.get(taskId);
         if (task) {

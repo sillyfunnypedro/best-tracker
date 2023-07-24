@@ -206,4 +206,24 @@ describe('Database', () => {
         });
 
     });
+
+    describe('deleteTask', () => {
+        it('should delete the task if the user matches the owner', () => {
+            const id = database.addTask('Test Task');
+            database.addUserToTask(id, 'Test User');
+            const result = database.deleteTask(id, 'Test User');
+            expect(result).toBe(true);
+            expect(database.tasks.size).toBe(0);
+        });
+    });
+
+    describe('deleteTask', () => {
+        it('should not delete the task if the user does not match the owner', () => {
+            const id = database.addTask('Test Task');
+            database.addUserToTask(id, 'Test User');
+            const result = database.deleteTask(id, 'Another User');
+            expect(result).toBe(false);
+            expect(database.tasks.size).toBe(1);
+        });
+    });
 });
