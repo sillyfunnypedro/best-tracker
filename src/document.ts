@@ -16,7 +16,9 @@ import Task from './task';
 // the database provides different documents.   The location of the 
 // documents is in the directory "documents" in the same directory as the executable
 
-class Database {
+
+
+class Document {
     private _tasks: Map<string, Task>;
     private _filename: string;
     private _id: number = 0;
@@ -168,4 +170,4 @@ class Database {
 
 }
 
-export { Task, Database }
+export { Task, Document as Database }

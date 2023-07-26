@@ -15,7 +15,7 @@ import bodyParser from 'body-parser';
 import cors from 'cors';
 import { PortsGlobal } from './PortsGlobal';
 
-import { Database } from './database';
+import { Database } from './document';
 
 // define a debug flag to turn on debugging
 const debug = true;

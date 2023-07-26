@@ -1,5 +1,5 @@
 export { };
-import { Task, Database } from './database';
+import { Task, Database } from './document';
 import * as fs from 'fs';
 import * as path from 'path';
 
