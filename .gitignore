@@ -13,9 +13,11 @@
 
 
 /documents
+/documents/*.json
 
 
 # misc
 .DS_Store
 .env
 npm-debug.log
+src/documents/fish.json

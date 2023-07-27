@@ -47,55 +47,7 @@ export function TaskClient({ userName, documentName }: TaskClientProps) {
     console.log(`TaskClient mounted with documentName=${documentName}`);
 
 
-    useEffect(() => {
-        console.log(`TaskClient interval started with documentName=${documentName}`);
-        // rest of useEffect code...
-        return () => {
-            console.log(`TaskClient interval stopped with documentName=${documentName}`);
-        };
-    }, [documentName]);
 
-    // function getTasks() {
-    //     const requestURL = baseURL + "/tasks"
-    //     const jsonDocumentName = JSON.stringify({
-    //         "documentName": documentName
-    //     })
-    //     console.log("get result------->" + jsonDocumentName)
-    //     const options = {
-    //         method: 'POST',
-    //         headers: {
-    //             'Content-Type': 'application/json'
-    //         },
-    //         body: JSON.stringify({
-    //             "documentName": documentName,
-    //             "test": documentName
-    //         })
-    //     }
-
-    //     fetch(requestURL, options)
-    //         .then((response) => {
-    //             console.log(`response: ${response}`);
-    //             return response.json();
-    //         }
-    //         ).then((json) => {
-
-    //             setTasks(json);
-    //         }
-    //         ).catch((error) => {
-    //             console.log(`getTask error: ${error}`);
-    //         }
-    //         );
-
-    // }
-
-    // // call getTasks on component mount and every 3 seconds thereafter
-    // useEffect(() => {
-    //     getTasks();
-    //     const intervalId = setInterval(() => {
-    //         getTasks();
-    //     }, 10000);
-    //     return () => clearInterval(intervalId);
-    // }, []);
 
     const getTasks = useCallback(() => {
         const requestURL = baseURL + "/tasks"
