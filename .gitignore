@@ -9,7 +9,9 @@
 # production
 /build
 
-# the server documents
+# the server documents any document in the /documents folder
+
+
 /documents
 
 

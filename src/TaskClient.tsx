@@ -2,7 +2,7 @@
 
 
 
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import Task from './task';
 import { PortsGlobal } from './PortsGlobal';
 
@@ -38,37 +38,106 @@ export function TaskClient({ userName, documentName }: TaskClientProps) {
     // get the local host name to bypass CORS
     let localHostName = window.location.hostname;
     console.log(`localHostName: ${localHostName}`);
+    console.log(`TaskClient rendering with documentName=${documentName}`);
+    // rest of component code...
 
     const [tasks, setTasks] = useState<Task[]>([]);
     const [taskName, setTaskName] = useState<string>('');
+    const [docName, setDocName] = useState<string>(documentName);
+    console.log(`TaskClient mounted with documentName=${documentName}`);
 
 
-    function getTasks() {
+    useEffect(() => {
+        console.log(`TaskClient interval started with documentName=${documentName}`);
+        // rest of useEffect code...
+        return () => {
+            console.log(`TaskClient interval stopped with documentName=${documentName}`);
+        };
+    }, [documentName]);
+
+    // function getTasks() {
+    //     const requestURL = baseURL + "/tasks"
+    //     const jsonDocumentName = JSON.stringify({
+    //         "documentName": documentName
+    //     })
+    //     console.log("get result------->" + jsonDocumentName)
+    //     const options = {
+    //         method: 'POST',
+    //         headers: {
+    //             'Content-Type': 'application/json'
+    //         },
+    //         body: JSON.stringify({
+    //             "documentName": documentName,
+    //             "test": documentName
+    //         })
+    //     }
+
+    //     fetch(requestURL, options)
+    //         .then((response) => {
+    //             console.log(`response: ${response}`);
+    //             return response.json();
+    //         }
+    //         ).then((json) => {
+
+    //             setTasks(json);
+    //         }
+    //         ).catch((error) => {
+    //             console.log(`getTask error: ${error}`);
+    //         }
+    //         );
+
+    // }
+
+    // // call getTasks on component mount and every 3 seconds thereafter
+    // useEffect(() => {
+    //     getTasks();
+    //     const intervalId = setInterval(() => {
+    //         getTasks();
+    //     }, 10000);
+    //     return () => clearInterval(intervalId);
+    // }, []);
+
+    const getTasks = useCallback(() => {
         const requestURL = baseURL + "/tasks"
-        fetch(requestURL)
+        const jsonDocumentName = JSON.stringify({
+            "documentName": documentName
+        })
+        console.log("get result------->" + jsonDocumentName)
+        const options = {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+                "documentName": documentName
+            })
+        }
+
+        fetch(requestURL, options)
             .then((response) => {
                 console.log(`response: ${response}`);
                 return response.json();
             }
             ).then((json) => {
-                console.log(`json: ${json}`);
+
                 setTasks(json);
             }
             ).catch((error) => {
                 console.log(`getTask error: ${error}`);
             }
             );
+    }, [documentName]);
 
-    }
-
-    // call getTasks on component mount and every 3 seconds thereafter
+    // force a refresh 3 times a second.
     useEffect(() => {
-        getTasks();
-        const intervalId = setInterval(() => {
+        const interval = setInterval(() => {
             getTasks();
         }, 333);
-        return () => clearInterval(intervalId);
-    }, []);
+        return () => {
+            clearInterval(interval);
+        };
+    }, [documentName, getTasks]);
+
 
 
     function requestTask(taskId: string) {
@@ -79,7 +148,9 @@ export function TaskClient({ userName, documentName }: TaskClientProps) {
             headers: {
                 'Content-Type': 'application/json'
             },
-            body: JSON.stringify({})
+            body: JSON.stringify({
+                "documentName": documentName
+            })
         }
         fetch(requestURL, options)
             .then((response) => {
@@ -104,7 +175,9 @@ export function TaskClient({ userName, documentName }: TaskClientProps) {
             headers: {
                 'Content-Type': 'application/json'
             },
-            body: JSON.stringify({})
+            body: JSON.stringify({
+                "documentName": documentName
+            })
         }
         fetch(requestURL, options)
             .then((response) => {
@@ -130,7 +203,9 @@ export function TaskClient({ userName, documentName }: TaskClientProps) {
             headers: {
                 'Content-Type': 'application/json'
             },
-            body: JSON.stringify({})
+            body: JSON.stringify({
+                "documentName": documentName
+            })
         }
         fetch(requestURL, options)
             .then((response) => {
@@ -155,7 +230,9 @@ export function TaskClient({ userName, documentName }: TaskClientProps) {
             headers: {
                 'Content-Type': 'application/json'
             },
-            body: JSON.stringify({})
+            body: JSON.stringify({
+                "documentName": documentName
+            })
         }
         fetch(requestURL, options)
             .then((response) => {
@@ -180,7 +257,9 @@ export function TaskClient({ userName, documentName }: TaskClientProps) {
             headers: {
                 'Content-Type': 'application/json'
             },
-            body: JSON.stringify({})
+            body: JSON.stringify({
+                "documentName": documentName
+            })
         }
         fetch(requestURL, options)
             .then((response) => {
@@ -205,7 +284,9 @@ export function TaskClient({ userName, documentName }: TaskClientProps) {
             headers: {
                 'Content-Type': 'application/json'
             },
-            body: JSON.stringify({})
+            body: JSON.stringify({
+                "documentName": documentName
+            })
         }
         fetch(requestURL, options)
             .then((response) => {
@@ -230,7 +311,9 @@ export function TaskClient({ userName, documentName }: TaskClientProps) {
             headers: {
                 'Content-Type': 'application/json'
             },
-            body: JSON.stringify({})
+            body: JSON.stringify({
+                "documentName": documentName
+            })
         }
         fetch(requestURL, options)
             .then((response) => {
@@ -246,6 +329,7 @@ export function TaskClient({ userName, documentName }: TaskClientProps) {
             }
             );
     }
+
 
     function addTask() {
 

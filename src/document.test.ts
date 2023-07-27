@@ -75,13 +75,32 @@ describe('Document', () => {
 
     beforeEach(() => {
         // get a unique filename for the test
-        const filename = `${Date.now()}`
+        const filename = `test-xxx-document-${Date.now()}`
         document = new Document(filename);
     });
 
     afterEach(() => {
-        // 
-        //fs.unlinkSync(document['_filename']);
+        const filename = document['_filename'];
+
+        // check if file exists
+        if (fs.existsSync(filename)) {
+            fs.unlinkSync(filename);
+        } else {
+            console.log(`File ${filename} does not exist`);
+        }
+
+    });
+
+    afterAll(() => {
+        // delete all the files that start with test-document
+        const directory = path.join(__dirname, 'documents');
+        const files = fs.readdirSync(directory);
+        for (const file of files) {
+            // check if it is a test file
+            if (file.startsWith('test-xxx-document')) {
+                fs.unlinkSync(path.join(directory, file));
+            }
+        }
     });
 
     describe('constructor', () => {
