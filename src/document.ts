@@ -83,6 +83,10 @@ class Document {
         return this._tasks;
     }
 
+    public getTasks(): Map<string, Task> {
+        return this._tasks;
+    }
+
     public reset() {
         this._tasks.clear();
         this._id = 0;
@@ -107,6 +111,18 @@ class Document {
         return id;
     }
 
+    public deleteTask(taskId: string, user: string): boolean {
+        let task = this._tasks.get(taskId);
+        if (task) {
+            if (task.owner == user) {
+                this._tasks.delete(taskId);
+                this._save();
+                return true;
+            }
+        }
+        return false;
+    }
+
     public addUserToTask(taskId: string, user: string): boolean {
         console.log(`>>>>>>>> attempting to assign ${user} to ${taskId}`);
         let task = this._tasks.get(taskId);
@@ -120,17 +136,6 @@ class Document {
         return false;
     }
 
-    public deleteTask(taskId: string, user: string): boolean {
-        let task = this._tasks.get(taskId);
-        if (task) {
-            if (task.owner == user) {
-                this._tasks.delete(taskId);
-                this._save();
-                return true;
-            }
-        }
-        return false;
-    }
 
     public removeUserFromTask(taskId: string, user: string) {
         let task = this._tasks.get(taskId);
@@ -170,4 +175,4 @@ class Document {
 
 }
 
-export { Task, Document as Database }
+export default Document;

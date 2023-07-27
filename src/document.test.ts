@@ -1,5 +1,6 @@
 export { };
-import { Task, Database } from './document';
+import Document from './document';
+import Task from './task';
 import * as fs from 'fs';
 import * as path from 'path';
 
@@ -69,30 +70,30 @@ describe('Task', () => {
     });
 });
 
-describe('Database', () => {
-    let database: Database;
+describe('Document', () => {
+    let document: Document;
 
     beforeEach(() => {
-        database = new Database();
+        // get a unique filename for the test
+        const filename = `${Date.now()}`
+        document = new Document(filename);
     });
 
     afterEach(() => {
-        database['_tasks'] = new Map<string, Task>();
-        database['_id'] = 0;
-        fs.unlinkSync(database['_filename']);
+        // 
+        fs.unlinkSync(document['_filename']);
     });
 
     describe('constructor', () => {
         it('should create a new database instance', () => {
-            expect(database).toBeDefined();
+            expect(document).toBeDefined();
         });
 
         it('should load the tasks from the file', () => {
             const taskName = 'Test Task';
-            database.addTask(taskName);
-            database = new Database();
-            expect(database.tasks.size).toBe(1);
-            const task = database.tasks.get('000000');
+            document.addTask(taskName);
+            expect(document.tasks.size).toBe(1);
+            const task = document.tasks.get('000000');
             expect(task).toBeDefined();
             expect(task?.name).toBe(taskName);
 
@@ -101,106 +102,106 @@ describe('Database', () => {
 
     describe('addTask', () => {
         it('should add a task to the list of tasks', () => {
-            const id = database.addTask('Test Task');
-            expect(database.tasks.size).toBe(1);
-            expect(database.tasks.get(id)).toBeDefined();
-            expect(database.tasks.get(id)?.name).toBe('Test Task');
-            expect(database.tasks.get(id)?.time).toBe(0);
-            expect(database.tasks.get(id)?.complete).toBe(false);
+            const id = document.addTask('Test Task');
+            expect(document.tasks.size).toBe(1);
+            expect(document.tasks.get(id)).toBeDefined();
+            expect(document.tasks.get(id)?.name).toBe('Test Task');
+            expect(document.tasks.get(id)?.time).toBe(0);
+            expect(document.tasks.get(id)?.complete).toBe(false);
         });
 
         it('should generate a unique id for the task', () => {
-            const id1 = database.addTask('Test Task 1');
-            const id2 = database.addTask('Test Task 2');
+            const id1 = document.addTask('Test Task 1');
+            const id2 = document.addTask('Test Task 2');
             expect(id1).not.toBe(id2);
         });
     });
 
     describe('addUserToTask', () => {
         it('should set the owner of the task to the specified user', () => {
-            const id = database.addTask('Test Task');
-            const result = database.addUserToTask(id, 'Test User');
+            const id = document.addTask('Test Task');
+            const result = document.addUserToTask(id, 'Test User');
             expect(result).toBe(true);
-            expect(database.tasks.get(id)?.owner).toBe('Test User');
+            expect(document.tasks.get(id)?.owner).toBe('Test User');
         });
 
         it('should not set the owner of the task if it is already set', () => {
-            const id = database.addTask('Test Task');
-            database.addUserToTask(id, 'Test User');
-            const result = database.addUserToTask(id, 'Another User');
+            const id = document.addTask('Test Task');
+            document.addUserToTask(id, 'Test User');
+            const result = document.addUserToTask(id, 'Another User');
             expect(result).toBe(false);
-            expect(database.tasks.get(id)?.owner).toBe('Test User');
+            expect(document.tasks.get(id)?.owner).toBe('Test User');
         });
 
         it('should return false if the task does not exist', () => {
-            const result = database.addUserToTask('000000', 'Test User');
+            const result = document.addUserToTask('000000', 'Test User');
             expect(result).toBe(false);
         });
     });
 
     describe('reset', () => {
         it('should clear the list of tasks', () => {
-            database.addTask('Test Task');
-            database.reset();
-            expect(database.tasks.size).toBe(0);
+            document.addTask('Test Task');
+            document.reset();
+            expect(document.tasks.size).toBe(0);
         });
     });
 
     describe('makeData', () => {
         it('should create a list of tasks', () => {
-            database.makeData();
-            expect(database.tasks.size).toBe(5);
+            document.makeData();
+            expect(document.tasks.size).toBe(5);
         });
     });
 
     describe('removeUserFromTask', () => {
         it('should clear the owner of the task', () => {
-            const id = database.addTask('Test Task');
-            database.addUserToTask(id, 'Test User');
-            database.removeUserFromTask(id, 'Test User');
-            expect(database.tasks.get(id)?.owner).toBe('');
+            const id = document.addTask('Test Task');
+            document.addUserToTask(id, 'Test User');
+            document.removeUserFromTask(id, 'Test User');
+            expect(document.tasks.get(id)?.owner).toBe('');
         });
 
         it('should not clear the owner of the task if the user does not match', () => {
-            const id = database.addTask('Test Task');
-            database.addUserToTask(id, 'Test User');
-            database.removeUserFromTask(id, 'Another User');
-            expect(database.tasks.get(id)?.owner).toBe('Test User');
+            const id = document.addTask('Test Task');
+            document.addUserToTask(id, 'Test User');
+            document.removeUserFromTask(id, 'Another User');
+            expect(document.tasks.get(id)?.owner).toBe('Test User');
         });
 
         it('should do nothing if the task does not exist', () => {
-            database.removeUserFromTask('000000', 'Test User');
-            expect(database.tasks.size).toBe(0);
+            document.removeUserFromTask('000000', 'Test User');
+            expect(document.tasks.size).toBe(0);
         });
     });
 
     describe('addTimeToTask', () => {
         it('should add time to the task if the user matches the owner', () => {
-            const id = database.addTask('Test Task');
-            database.addUserToTask(id, 'Test User');
-            const result = database.addTimeToTask(id, 'Test User', 30);
+            const id = document.addTask('Test Task');
+            document.addUserToTask(id, 'Test User');
+            const result = document.addTimeToTask(id, 'Test User', 30);
             expect(result).toBe(true);
-            expect(database.tasks.get(id)?.time).toBe(30);
+            expect(document.tasks.get(id)?.time).toBe(30);
         });
 
         it('should not add time to the task if the user does not match the owner', () => {
-            const id = database.addTask('Test Task');
-            database.addUserToTask(id, 'Test User');
-            const result = database.addTimeToTask(id, 'Another User', 30);
+            const id = document.addTask('Test Task');
+            document.addUserToTask(id, 'Test User');
+            const result = document.addTimeToTask(id, 'Another User', 30);
             expect(result).toBe(false);
-            expect(database.tasks.get(id)?.time).toBe(0);
+            expect(document.tasks.get(id)?.time).toBe(0);
         });
 
         it('should do nothing if the task does not exist', () => {
-            const result = database.addTimeToTask('000000', 'Test User', 30);
+            const result = document.addTimeToTask('000000', 'Test User', 30);
             expect(result).toBe(false);
         });
     });
 
     describe('named constructor', () => {
         it('should be able to create a new database with a name', () => {
-            const database1 = new Database('test1');
-            const database2 = new Database('test2');
+            const database1 = new Document('test1');
+            const database2 = new Document('test2');
             expect(database1['_filename']).toBe(path.join(__dirname, 'documents', 'test1.json'));
             expect(database2['_filename']).toBe(path.join(__dirname, 'documents', 'test2.json'));
         });
@@ -209,21 +210,21 @@ describe('Database', () => {
 
     describe('deleteTask', () => {
         it('should delete the task if the user matches the owner', () => {
-            const id = database.addTask('Test Task');
-            database.addUserToTask(id, 'Test User');
-            const result = database.deleteTask(id, 'Test User');
+            const id = document.addTask('Test Task');
+            document.addUserToTask(id, 'Test User');
+            const result = document.deleteTask(id, 'Test User');
             expect(result).toBe(true);
-            expect(database.tasks.size).toBe(0);
+            expect(document.tasks.size).toBe(0);
         });
     });
 
     describe('deleteTask', () => {
         it('should not delete the task if the user does not match the owner', () => {
-            const id = database.addTask('Test Task');
-            database.addUserToTask(id, 'Test User');
-            const result = database.deleteTask(id, 'Another User');
+            const id = document.addTask('Test Task');
+            document.addUserToTask(id, 'Test User');
+            const result = document.deleteTask(id, 'Another User');
             expect(result).toBe(false);
-            expect(database.tasks.size).toBe(1);
+            expect(document.tasks.size).toBe(1);
         });
     });
 });

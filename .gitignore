@@ -9,6 +9,9 @@
 # production
 /build
 
+# the server documents
+/documents
+
 
 # misc
 .DS_Store

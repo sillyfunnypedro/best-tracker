@@ -15,7 +15,7 @@ import bodyParser from 'body-parser';
 import cors from 'cors';
 import { PortsGlobal } from './PortsGlobal';
 
-import { Database } from './document';
+import Database from './database';
 
 // define a debug flag to turn on debugging
 const debug = true;
@@ -81,7 +81,7 @@ app.delete('/tasks', (req: express.Request, res: express.Response) => {
 // get /tasks returns a list of all the tasks
 app.get('/tasks', (req: express.Request, res: express.Response) => {
     let tasks = [];
-    for (let [id, task] of db.tasks) {
+    for (let [id, task] of db.getTasks()) {
         tasks.push({
             id: id,
             name: task.name,

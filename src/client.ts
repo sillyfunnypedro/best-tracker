@@ -1,4 +1,4 @@
-import { Task } from './document';
+import Task from './task';
 import axios from 'axios';
 
 import { PortsGlobal } from './PortsGlobal';
