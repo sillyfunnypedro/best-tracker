@@ -12,12 +12,12 @@
 # the server documents any document in the /documents folder
 
 
-/documents
-/documents/*.json
+/src/documents
+
 
 
 # misc
 .DS_Store
 .env
 npm-debug.log
-src/documents/fish.json
+
