@@ -25,10 +25,11 @@ class Document {
     private _documentDirectory: string = path.join(__dirname, "documents");
 
     // default document name is tasks
-    constructor(documentName: string = "tasks") {
+    constructor(documentName: string) {
+        if (documentName === '') {
+            throw new Error('document name cannot be empty');
+        }
         this._tasks = new Map<string, Task>();
-        // remove any / or \ from the document name
-        documentName = documentName.replace(/[\/\\]/g, "");
 
         this._filename = path.join(this._documentDirectory, documentName + ".json");
         this._load();

@@ -69,6 +69,14 @@ export class Database {
         return documents;
     }
 
+    public getDocumentNames(): string[] {
+        let documents = [];
+        for (let [name, document] of this._documents) {
+            documents.push(name);
+        }
+        return documents;
+    }
+
     public createDocument(documentName: string = "tasks"): Document {
         let document = new Document(documentName);
         this._documents.set(documentName, document);

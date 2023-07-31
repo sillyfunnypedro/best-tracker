@@ -67,7 +67,11 @@ app.delete('/tasks', (req: express.Request, res: express.Response) => {
     res.json({ success: true });
 });
 
-
+app.get('/documents', (req: express.Request, res: express.Response) => {
+    let documents: string[] = db.getDocumentNames();
+    console.log(documents);
+    res.json(documents);
+});
 
 // get /tasks returns a list of all the tasks
 app.post('/tasks', (req: express.Request, res: express.Response) => {
