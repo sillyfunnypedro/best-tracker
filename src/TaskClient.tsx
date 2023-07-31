@@ -26,15 +26,18 @@ const baseURL = `http://${hostname}:${port}`;
 // it will get the tasks from the server and display them in buttons
 // that can be selected
 
+
+
 // define the props for the component, a string for the user name
 interface TaskClientProps {
     userName: string;
     documentName: string;
+    resetURL: (documentName: string) => void;
 }
 
 
 
-export function TaskClient({ userName, documentName }: TaskClientProps) {
+export function TaskClient({ userName, documentName, resetURL }: TaskClientProps) {
     // get the local host name to bypass CORS
     let localHostName = window.location.hostname;
     console.log(`localHostName: ${localHostName}`);
@@ -330,67 +333,79 @@ export function TaskClient({ userName, documentName }: TaskClientProps) {
         }
         if (task.complete) {
             return <div>
-                <table><tr>
-                    <td>{getTaskString(task)}</td>
-                    <td>
-                        <div className="label">
-                            Completed by:{task.owner}
-                        </div>
-                    </td>
-                </tr></table>
+                <table>
+                    <tbody>
+                        <tr>
+                            <td>{getTaskString(task)}</td>
+                            <td>
+                                <div className="label">
+                                    Completed by:{task.owner}
+                                </div>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
 
             </div>
         }
         if (available) {
             return <div>
-                <table><tr>
-                    <td>{getTaskString(task)} </td>
-                    <td className="label"><button
-                        onClick={() => requestTask(task.id)}>
-                        Select
-                    </button>
-                    </td>
-                </tr></table>
+                <table>
+                    <tbody>
+                        <tr>
+                            <td>{getTaskString(task)} </td>
+                            <td className="label"><button
+                                onClick={() => requestTask(task.id)}>
+                                Select
+                            </button>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
             </div>
         }
         if (working) {
             return <div >
                 <table>
-                    <tr>
-                        <td>
-                            {getTaskString(task)}
-                        </td>
-                        <td>
-                            <button onClick={() => updateTask(task.id)}>
-                                Update
-                            </button>
-                            <button onClick={() => releaseTask(task.id)}>
-                                Release
-                            </button>
-                            <button onClick={() => completeTask(task.id)}>
-                                Complete
-                            </button>
-                            <button onClick={() => deleteTask(task.id)}>
-                                Delete
-                            </button>
+                    <tbody>
+                        <tr>
+                            <td>
+                                {getTaskString(task)}
+                            </td>
+                            <td>
+                                <button onClick={() => updateTask(task.id)}>
+                                    Update
+                                </button>
+                                <button onClick={() => releaseTask(task.id)}>
+                                    Release
+                                </button>
+                                <button onClick={() => completeTask(task.id)}>
+                                    Complete
+                                </button>
+                                <button onClick={() => deleteTask(task.id)}>
+                                    Delete
+                                </button>
 
-                        </td>
-                    </tr>
+                            </td>
+                        </tr>
+                    </tbody>
                 </table>
             </div>
         }
 
         return <div>
             <table>
-                <tr>
-                    <td>
-                        {getTaskString(task)}
-                    </td>
-                    <td className="label">
-                        {task.owner} is working
+                <tbody>
+                    <tr>
+                        <td>
+                            {getTaskString(task)}
+                        </td>
+                        <td className="label">
+                            {task.owner} is working
 
-                    </td>
-                </tr>
+                        </td>
+                    </tr>
+                </tbody>
             </table>
         </div>
     }
@@ -401,11 +416,14 @@ export function TaskClient({ userName, documentName }: TaskClientProps) {
         console.log(tasks)
         if (tasks.length > 0) {
             return <div>
-                {tasks.map((task) => (
-                    <li key={task.name}>{getTaskComponent(task)}
-                    </li>
+                <h5>Tasks</h5>
+                <ul className="no-bullets">
+                    {tasks.map((task) => (
+                        <li key={task.name}>{getTaskComponent(task)}
+                        </li>
 
-                ))}
+                    ))}
+                </ul>
             </div>
         } else {
             return <div>
@@ -417,82 +435,51 @@ export function TaskClient({ userName, documentName }: TaskClientProps) {
 
     function getControlButtons() {
         return <div>
+            <h5>Control Buttons</h5>
             <table>
-                <tr>
-                    <td>
-                        <button onClick={clearServer}>ClearServer</button>
-                    </td>
-                    <td>
-                        <button onClick={makeData}>Make Data</button>
-                    </td>
-                    <td>
-                        <button onClick={getTasks}>Get Tasks</button>
-                    </td>
+                <tbody>
+                    <tr>
+                        <td>
+                            <button onClick={() => resetURL('files')}>File Browser</button>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <button onClick={clearServer}>Clear Sheet</button>
+                        </td>
+                        <td>
+                            <button onClick={makeData}>Make Test Data</button>
+                        </td>
 
-                </tr>
-                <tr>
-                    <td>
-                        <input
-                            type="text"
-                            placeholder="Task name"
-                            onChange={(event) => {
-                                // get the text from the input
-                                let taskName = event.target.value;
-                                // set the user name
-                                setTaskName(taskName);
-                            }}
-                        />
-                    </td>
-                    <td>
-                        <button onClick={addTask}>Add Task</button>
-                    </td>
-                </tr>
+                    </tr>
+                    <tr>
+                        <td>
+                            <button onClick={addTask}>Add Task</button>
+                        </td>
+                        <td>
+                            <input
+                                type="text"
+                                placeholder="Task name"
+                                onChange={(event) => {
+                                    // get the text from the input
+                                    let taskName = event.target.value;
+                                    // set the user name
+                                    setTaskName(taskName);
+                                }}
+                            />
+                        </td>
+
+                    </tr>
+                </tbody>
             </table>
         </div>
     }
 
     return (
         <div>
-            <h3>control plane</h3>
             {getControlButtons()}
-            <h3> data plane</h3>
-            <ul>
-                {getComponentForTasks(tasks)}
-            </ul>
+            {getComponentForTasks(tasks)}
         </div>
     );
 }
 export default TaskClient;
-// export function TaskClient() {
-//     // get the local host name to bypass CORS
-//     let localHostName = window.location.hostname;
-//     console.log(`localHostName: ${localHostName}`);
-
-//     const [tasks, setTasks] = useState<Task[]>([]);
-//     useEffect(() => {
-//         fetch(url)
-//             .then((response) => {
-//                 console.log(`response: ${response}`);
-//                 return response.json();
-//             }
-//             ).then((json) => {
-//                 console.log(`json: ${json}`);
-//                 setTasks(json);
-//             }
-//             ).catch((error) => {
-//                 console.log(`xxxxxxx error: ${error}`);
-//             });
-//     }, [url]);
-//     return (
-//         <div>
-//             <h1>Tasks</h1>
-//             <ul>
-//                 {tasks.map((task) => (
-//                     <li key={task.name}>{task.name}</li>
-//                 ))}
-//             </ul>
-//         </div>
-//     );
-// }
-
-// export default TaskClient;
