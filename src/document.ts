@@ -92,6 +92,7 @@ class Document {
         this._tasks.clear();
         this._id = 0;
         this._save();
+        this._load();
     }
 
     public makeData() {

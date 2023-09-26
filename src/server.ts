@@ -43,6 +43,8 @@ const db = new Database();
 
 
 app.post('/cleardata', (req: express.Request, res: express.Response) => {
+    // the documentName is in rec.bogy.documentName
+    // return a json object with a success flag ({success: true}})
     let documentName = req.body.documentName
     db.reset(documentName);
     res.json({ success: true });
@@ -50,10 +52,7 @@ app.post('/cleardata', (req: express.Request, res: express.Response) => {
 
 
 app.post('/makedata', (req: express.Request, res: express.Response) => {
-    let documentName = req.body.documentName
-    console.log(`makedata ${documentName}`)
-    db.makeData(documentName);
-    res.json({ success: true });
+
 });
 // ********************************************
 // the above is not good practice
@@ -61,32 +60,20 @@ app.post('/makedata', (req: express.Request, res: express.Response) => {
 // ********************************************
 
 // delete /tasks clears the list of tasks
-app.delete('/tasks', (req: express.Request, res: express.Response) => {
-    let documentName = req.body.documentName
-    db.reset(documentName);
-    res.json({ success: true });
+app.post('/tasks/delete/', (req: express.Request, res: express.Response) => {
+    console.log("deleting tasks");
 });
 
 app.get('/documents', (req: express.Request, res: express.Response) => {
-    let documents: string[] = db.getDocumentNames();
-    console.log(documents);
+    // find the db function that returns a list of documents
+    let documents: string[] = []
     res.json(documents);
 });
 
 // get /tasks returns a list of all the tasks
 app.post('/tasks', (req: express.Request, res: express.Response) => {
-    let tasks = [];
-    let documentName = req.body.documentName
-    let test = req.body.test
-    for (let [id, task] of db.getTasks(documentName)) {
-        tasks.push({
-            id: id,
-            name: task.name,
-            time: task.time,
-            complete: task.complete,
-            owner: task.owner
-        });
-    }
+    // return a list of the tasks each with an [ id , task]
+    let tasks: string[] = [] // this is not the right type
     res.json(tasks);
 });
 
@@ -103,61 +90,45 @@ app.post('/tasks/add/:name', (req: express.Request, res: express.Response) => {
 
 // assign user to the task
 app.put('/tasks/assign/:id/:user', (req: express.Request, res: express.Response) => {
-    let id = req.params.id;
-    let user = req.params.user;
-    let documentName = req.body.documentName
+    // look up the db function that assigns a user to a task
+    const success = true;
 
-    console.log(`attempting to assign ${user} to ${id}`);
-    const success = db.addUserToTask(id, user, documentName);
-    if (success) {
-        console.log(`assigned ${user} to ${id}`);
-    } else {
-        console.log(`failed to assign ${user} to ${id}`);
-    }
     res.json({ success: success });
 });
 
 // remove user from the task
 app.put('/tasks/remove/:id/:user', (req: express.Request, res: express.Response) => {
-    let id = req.params.id;
-    let user = req.params.user;
-    let documentName = req.body.documentName
-    const success = db.removeUserFromTask(id, user, documentName);
+    // lookup the db function that removes a user from a task
+
+    const success = true;
     res.json({ success: success });
 });
 
 // add time to the task
 app.put('/tasks/update/:id/:user/:time', (req: express.Request, res: express.Response) => {
-    let id = req.params.id;
-    let user = req.params.user;
-    let time = Number(req.params.time);
-    let documentName = req.body.documentName
-    const success = db.addTimeToTask(id, user, time, documentName);
-    if (success) {
-        console.log(`added ${time} to ${id} for ${user}`);
-    } else {
-        console.log(`failed to add ${time} to ${id} for ${user}`);
-    }
+    // look up the db function that adds time to a task
+
+    const success = true;
+
+
     res.json({ success: success });
 });
 
 
 // delete a task from the list if it is owed by the user
-app.delete('/tasks/delete/:id/:user', (req: express.Request, res: express.Response) => {
-    let id = req.params.id;
-    let user = req.params.user;
-    let documentName = req.body.documentName
-    const success = db.deleteTask(id, user, documentName);
+app.post('/tasks/delete/:id/:user', (req: express.Request, res: express.Response) => {
+    // look up the db function that deletes a task from the list
+
+    const success = true;
     res.json({ success: success });
 });
 
 
 // mark task as complete
 app.put('/tasks/complete/:id/:user', (req: express.Request, res: express.Response) => {
-    let id = req.params.id;
-    let user = req.params.user;
-    let documentName = req.body.documentName
-    const success = db.markTaskComplete(id, user, documentName);
+    // look up the db function that marks a task as complete
+
+    const success = true;
     res.json({ success: success });
 });
 

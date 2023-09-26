@@ -81,6 +81,11 @@ function App() {
     window.location.reload();
   }
 
+  function deleteDocument(documentName: string) {
+    console.log(`deleteDocument: ${documentName}`);
+
+  }
+
 
 
   function GetDocumentString() {
@@ -126,7 +131,7 @@ function App() {
   }
 
   function getControlPlane() {
-    return <FileBrowser resetURL={resetURL} />
+    return <FileBrowser resetURL={resetURL} deleteDocument={deleteDocument} />
   }
 
   function getDisplayComponent() {
@@ -169,5 +174,6 @@ function App() {
     </BrowserRouter  >
   );
 }
+
 
 export default App;

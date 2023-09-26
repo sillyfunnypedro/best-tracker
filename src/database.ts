@@ -42,13 +42,19 @@ export class Database {
 
     }
 
+    private _loadDocument(documentName: string) {
+
+        let document = new Document(documentName);
+        this._documents.set(documentName, document);
+
+    }
+
     private _loadDocuments() {
         let files = fs.readdirSync(this._documentDirectory);
 
         for (let file of files) {
             let documentName = path.parse(file).name;
-            let document = new Document(documentName);
-            this._documents.set(documentName, document);
+            this._loadDocument(documentName);
         }
     }
 
@@ -93,14 +99,16 @@ export class Database {
         return document.getTasks();
     }
 
-    public reset(documentName: string = "tasks") {
-        // check to see if the document exists
+    public reset(documentName: string) {
+
+        //check to see if the document exists
         if (!this._documents.has(documentName)) {
             // create the document
             this.createDocument(documentName);
         }
         let document = this.getDocument(documentName);
         document.reset();
+        this._loadDocuments();
     }
 
     public makeData(documentName: string = "tasks") {

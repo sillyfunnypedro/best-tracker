@@ -18,9 +18,10 @@ const baseURL = `http://${hostname}:${port}`;
 // include a function to call with a document name to modify the URL
 interface FileBrowserProps {
     resetURL: (documentName: string) => void;
+    deleteDocument: (documentName: string) => void;
 }
 
-export function FileBrowser({ resetURL }: FileBrowserProps) {
+export function FileBrowser({ resetURL, deleteDocument }: FileBrowserProps) {
 
     const [files, setFiles] = useState<string[]>([]);
     const [newFileName, setNewFileName] = useState<string>('');
@@ -57,10 +58,17 @@ export function FileBrowser({ resetURL }: FileBrowserProps) {
     // return a button for a file
     // onclick should call the resetURL function
     function getButtonForFile(file: string) {
-        return <button onClick={() =>
-            resetURL(file)}>
-            {file}
-        </button>
+        return <div>
+            <button onClick={() =>
+                resetURL(file)}>
+                OPEN{" [" + file + "] "}
+            </button>
+            <button onClick={() =>
+                deleteDocument(file)}>
+                DELETE
+            </button>
+        </div>
+
     }
 
     // return a <ul> list of the files
@@ -103,6 +111,7 @@ export function FileBrowser({ resetURL }: FileBrowserProps) {
                         Create New File
                     </button>
                     </td>
+
                 </tr>
             </tbody>
         </table>

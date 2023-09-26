@@ -12,7 +12,8 @@ import './TaskClient.css';
 
 const port = PortsGlobal.serverPort;
 
-const hostname = window.location.hostname;
+const hostname = "localhost"
+
 const baseURL = `http://${hostname}:${port}`;
 
 
@@ -205,10 +206,11 @@ export function TaskClient({ userName, documentName, resetURL }: TaskClientProps
     }
 
     function clearServer() {
-        const path = `/tasks`;
+        const path = `/tasks/delete`;
         const requestURL = baseURL + path;
+        console.log(`clearServer: ${documentName}`);
         const options = {
-            method: 'DELETE',
+            method: 'POST',
             headers: {
                 'Content-Type': 'application/json'
             },
@@ -235,7 +237,7 @@ export function TaskClient({ userName, documentName, resetURL }: TaskClientProps
         const path = `/tasks/delete/${taskId}/${userName}`;
         const requestURL = baseURL + path;
         const options = {
-            method: 'DELETE',
+            method: 'POST',
             headers: {
                 'Content-Type': 'application/json'
             },

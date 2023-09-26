@@ -25,8 +25,11 @@ export default class Client {
         return this._userID;
     }
 
-    public async clearData(): Promise<boolean> {
-        const response = await axios.delete(`http://localhost:${this._serverPort}/tasks`);
+    public async clearData(documentName: string): Promise<boolean> {
+        const body = {
+            documentName: documentName
+        }
+        const response = await axios.post(`http://localhost:${this._serverPort}/tasks`, body);
         if (response.status == 200) {
             return true
         } else {
@@ -34,9 +37,14 @@ export default class Client {
         }
     }
 
-    public async getTasks(): Promise<Task[]> {
+    public async getTasks(documentName: string): Promise<Task[]> {
         //construct the get request to the server
-        const response = await axios.get(`http://localhost:${this._serverPort}/tasks`);
+        const URL = `http://localhost:${this._serverPort}/tasks/`;
+        // add the document name to the body of the request
+        const body = {
+            documentName: documentName
+        }
+        const response = await axios.post(URL, body);
         let result: Task[] = [];
         if (response.status == 200) {
 
@@ -49,17 +57,28 @@ export default class Client {
         return result;
     }
 
-    public async postTask(taskName: string): Promise<string> {
-        const response = await axios.post(`http://localhost:${this._serverPort}/tasks/add/${taskName}`);
+    public async postTask(taskName: string, documentName: string): Promise<string> {
+        const body = {
+            documentName: documentName
+        }
+        const response = await axios.post(`http://localhost:${this._serverPort}/tasks/add/${taskName}`, body);
         if (response.status == 200) {
-            return response.data.id;
+
+            // convert to a json object
+            const responseData = response.data;
+            const id = responseData.id;
+            console.log(`Task ${taskName} has been posted with id ${id}`);
+            return id;
         } else {
             return "NODATA";
         }
     }
 
-    public async postTimeToTask(taskId: string, time: number): Promise<boolean> {
-        const response = await axios.put(`http://localhost:${this._serverPort}/tasks/update/${taskId}/${this._userID}/${time}`);
+    public async postTimeToTask(taskId: string, time: number, documentName: string): Promise<boolean> {
+        const body = {
+            documentName: documentName
+        }
+        const response = await axios.put(`http://localhost:${this._serverPort}/tasks/update/${taskId}/${this._userID}/${time}`, body);
         if (response.status == 200) {
             return true;
         } else {
@@ -67,8 +86,11 @@ export default class Client {
         }
     }
 
-    public async addUserToTask(taskId: string): Promise<boolean> {
-        const response = await axios.put(`http://localhost:${this._serverPort}/tasks/assign/${taskId}/${this._userID}`);
+    public async addUserToTask(taskId: string, documentName: string): Promise<boolean> {
+        const body = {
+            documentName: documentName
+        }
+        const response = await axios.put(`http://localhost:${this._serverPort}/tasks/assign/${taskId}/${this._userID}`, body);
         if (response.status == 200) {
             console.log(response.data);
             const result = response.data;
@@ -78,8 +100,11 @@ export default class Client {
         }
     }
 
-    public async removeUserFromTask(taskId: string): Promise<boolean> {
-        const response = await axios.put(`http://localhost:${this._serverPort}/tasks/remove/${taskId}/${this._userID}`);
+    public async removeUserFromTask(taskId: string, documentName: string): Promise<boolean> {
+        const body = {
+            documentName: documentName
+        }
+        const response = await axios.put(`http://localhost:${this._serverPort}/tasks/remove/${taskId}/${this._userID}`, body);
         if (response.status == 200) {
             return true;
         } else {
@@ -87,16 +112,31 @@ export default class Client {
         }
     }
 
-    public async markTaskComplete(taskId: string): Promise<boolean> {
-        const response = await axios.put(`http://localhost:${this._serverPort}/tasks/complete/${taskId}/${this._userID}`);
+    public async markTaskComplete(taskId: string, documentName: string): Promise<boolean> {
+        const body = {
+            documentName: documentName
+        }
+        const response = await axios.put(`http://localhost:${this._serverPort}/tasks/complete/${taskId}/${this._userID}`, body);
         if (response.status == 200) {
             return true;
         } else {
             return false;
         }
     }
-
+    public async deleteTask(taskId: string, documentName: string): Promise<boolean> {
+        const body = {
+            documentName: documentName
+        }
+        const response = await axios.put(`http://localhost:${this._serverPort}/tasks/delete/${taskId}/${this._userID}`, body);
+        if (response.status == 200) {
+            return true;
+        } else {
+            return false;
+        }
+    }
 }
+
+
 
 
 

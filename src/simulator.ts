@@ -10,20 +10,20 @@
 
 import Client from './client';
 
-
+const documentName = "fred.json";
 const dispatcher = new Client('dispatcher');
 const worker1 = new Client('user1');
 const worker2 = new Client('user2');
 
 async function resetServer() {
     // clear the database
-    worker1.clearData();
+    worker1.clearData(documentName);
 }
 
 
 async function workOnTask(client: Client, taskId: string, time: number) {
     // request the task
-    await client.addUserToTask(taskId);
+    await client.addUserToTask(taskId, documentName);
     console.log(`${client.userID} is working on ${taskId} for ${time} seconds`);
 
 
@@ -31,10 +31,10 @@ async function workOnTask(client: Client, taskId: string, time: number) {
     for (let i = 0; i < time; i++) {
         console.log(`${client.userID} is working on ${taskId}`);
         await new Promise(resolve => setTimeout(resolve, 1000));
-        await client.postTimeToTask(taskId, 1);
+        await client.postTimeToTask(taskId, 1, documentName);
     }
     // post the time to the server
-    await client.removeUserFromTask(taskId);
+    await client.removeUserFromTask(taskId, documentName);
 
     console.log(`${client.userID} has worked on ${taskId} for ${time} seconds`);
 }
@@ -42,7 +42,7 @@ async function workOnTask(client: Client, taskId: string, time: number) {
 async function canWorkOnTask(client: Client, taskId: string): Promise<boolean> {
     console.log(`${client.userID} is checking if they can work on ${taskId}`);
 
-    let canWork = await worker2.addUserToTask(taskId)
+    let canWork = await worker2.addUserToTask(taskId, documentName)
         .then((result: boolean) => {
             return result;
         });
@@ -62,9 +62,9 @@ async function main() {
     await resetServer();
 
 
-    let task1 = dispatcher.postTask('task1');
-    let task2 = dispatcher.postTask('task2');
-    let task3 = dispatcher.postTask('task3');
+    let task1 = dispatcher.postTask('task1', documentName);
+    let task2 = dispatcher.postTask('task2', documentName);
+    let task3 = dispatcher.postTask('task3', documentName);
 
     let taskIdentifiers: string[] = [];
     Promise.all([task1, task2, task3]).then((values) => {
@@ -73,8 +73,12 @@ async function main() {
         console.log(values);
     });
 
-    let tasksPromise = dispatcher.getTasks();
-    let worker1TasksPromise = worker1.getTasks();
+
+    // get the dispatcher tasks.  
+    let tasksPromise = dispatcher.getTasks(documentName);
+
+    // get the worker1 tasks.  
+    let worker1TasksPromise = worker1.getTasks(documentName);
 
     let dispatcherTasks: any;
     let worker1Tasks: any;
@@ -122,8 +126,8 @@ async function main() {
     workOnTask(worker2, taskIdentifiers[0], worker2time);
 
 
-    // worker2 will mark task1 as complete
-    worker2.markTaskComplete(taskIdentifiers[0]);
+    // // worker2 will mark task1 as complete
+    worker2.markTaskComplete(taskIdentifiers[0], documentName);
 
 
 
